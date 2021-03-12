@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  web:
+    build:
+      context: ./layers/nginx
+      dockerfile: Dockerfile
+    container_name: ${COMPOSE_PROJECT_NAME}_web
+    volumes:
+      - ./app:${WEB_ROOT_PATH}
+      - ./layers/nginx/templates:/etc/nginx/templates
+    ports:
+      - ${WEB_PORT}:10000
+    depends_on:
+      - php-fpm
+    environment:
+      - DOMAIN=${DOMAIN}
+      - WEB_ROOT_PATH=${WEB_ROOT_PATH}
+      - WEB_PUBLIC=${WEB_PUBLIC}
+    networks:
+      backend:
+        aliases:
+          - web

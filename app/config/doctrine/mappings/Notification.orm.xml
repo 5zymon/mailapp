@@ -1,0 +1,18 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                          https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Entity\Notification" table="notification" repository-class="App\Repository\NotificationRepository">
+
+        <id name="id" type="uuid">
+            <generator strategy="NONE"/>
+        </id>
+
+        <field name="status" type="text" length="200"/>
+        <field name="content" type="text" />
+        <field name="createdAt" type="datetime" />
+        <many-to-one field="contact" target-entity="Contact" inversed-by="notifications">
+            <join-column name="contact_id" referenced-column-name="id"  on-delete="SET NULL" />
+        </many-to-one>
+    </entity>
+</doctrine-mapping>

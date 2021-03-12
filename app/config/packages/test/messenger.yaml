@@ -1,0 +1,7 @@
+framework:
+    messenger:
+        routing:
+            App\MessageBus\SendEmailNotification: async
+
+        transports:
+            async: 'in-memory://'

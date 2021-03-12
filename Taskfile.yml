@@ -1,0 +1,63 @@
+version: '3'
+
+tasks:
+  init:
+    desc: Initializes app for the first time
+    cmds:
+      - cp .env.dist .env && cp ./app/.env.dist ./app/.env
+      - docker-compose build
+      - docker-compose up -d
+      - sleep 10
+      - docker-compose exec php-fpm composer install
+      - task: doctrine:migrate
+      - task: doctrine:fixtures
+
+  ecs:
+    desc: Runs ECS check
+    cmds:
+      - docker-compose exec php-fpm vendor/bin/ecs check
+
+  ecs:fix:
+    desc: Runs ECS and fixes code style
+    cmds:
+      - docker-compose exec php-fpm vendor/bin/ecs check --fix
+
+  phpstan:
+    desc: Runs PHPStan check
+    cmds:
+      - docker-compose exec php-fpm vendor/bin/phpstan analyse src
+
+  doctrine:migrate:
+    desc: Database schema update
+    cmds:
+      - docker-compose exec php-fpm bin/console doctrine:migrations:migrate -n
+
+  doctrine:fixtures:
+    desc: Runs fixtures
+    cmds:
+      - docker-compose exec php-fpm bin/console doctrine:fixtures:load -n
+
+  mailhog:stop:
+    desc: Stops mailcatcher
+    cmds:
+      - docker-compose stop mailhog
+
+  mailhog:start:
+    desc: Stops mailcatcher
+    cmds:
+      - docker-compose start mailhog
+
+  messenger:show-failed:
+    desc: Shows failed messages
+    cmds:
+      - docker-compose exec php-fpm bin/console messenger:failed:show
+
+  messenger:retry:
+    desc: Retries failed messages
+    cmds:
+      - docker-compose exec php-fpm bin/console messenger:failed:retry
+
+  test:
+    desc: Runs Unit Tests (will
+    cmds:
+      - docker-compose exec php-fpm vendor/bin/phpunit

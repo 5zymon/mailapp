@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+  php-fpm:
+    build:
+      context: ./layers/php-fpm
+      dockerfile: Dockerfile
+      args:
+        - WEB_ROOT_PATH=${WEB_ROOT_PATH}
+    container_name: ${COMPOSE_PROJECT_NAME}_php
+    volumes:
+      - ./app:${WEB_ROOT_PATH}
+      - ./layers/php-fpm/ini_files/php.ini:/usr/local/etc/php/php.ini
+      - ./layers/php-fpm/ini_files/tzone.ini:/usr/local/etc/php/conf.d/tzone.ini
+    ports:
+      - ${PHP_PORT}
+    env_file:
+      - .env
+    networks:
+      backend:
+        aliases:
+          - php
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: ${COMPOSE_PROJECT_NAME}_mailhog
+    expose:
+      - ${MAILHOG_SMTP_INTERNAL}
+    ports:
+      - ${MAILHOG_UI_EXTERNAL}:${MAILHOG_UI_INTERNAL}
+    networks:
+      - backend
+
+networks:
+  backend:

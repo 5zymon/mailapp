@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  database_mysql:
+    image: mysql:5.7
+    container_name: ${COMPOSE_PROJECT_NAME}_db_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      TZ: ${TZ}
+    expose:
+      - 3306
+    networks:
+      - backend
